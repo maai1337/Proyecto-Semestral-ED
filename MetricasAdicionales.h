@@ -1,0 +1,13 @@
+//
+// Created by sebastian on 6/27/26.
+//
+
+#ifndef PROYECTO_SEMESTRAL_ED_METRICASADICIONALES_H
+#define PROYECTO_SEMESTRAL_ED_METRICASADICIONALES_H
+
+
+class MetricasAdicionales {
+};
+
+
+#endif //PROYECTO_SEMESTRAL_ED_METRICASADICIONALES_H
