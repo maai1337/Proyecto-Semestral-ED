@@ -24,34 +24,33 @@ Grafo<string> parsearDatasetRed(const string& nombreArchivo, bool dirigido) {
         string campo;
         
         string src_ip, dst_ip;
-        string src_bytes_str, dst_bytes_str;
+        string duration_str;
 
         int index = 0;
         while (getline(ss, campo, ',')) {
             if (index == 0) src_ip = campo;
             else if (index == 2) dst_ip = campo;
-            else if (index == 7) src_bytes_str = campo;
-            else if (index == 8) dst_bytes_str = campo;
+            else if (index == 6) duration_str = campo;
             index++;
         }
 
-        if (index < 9) continue; // Si la línea está incompleta la ignoramos
+        if (index < 7) continue; // Si la línea está incompleta la ignoramos
 
-        auto parseBytes = [](const string& str) -> long {
-            if (str.empty() || str == "-") return 0;
-            if (!isdigit(str[0])) return 0;
+        auto parseDuration = [](const string& str) -> double {
+            if (str.empty() || str == "-") return 0.0;
+            if (!isdigit(str[0]) && str[0] != '.') return 0.0;
             try {
-                return stol(str);
+                return stod(str);
             } catch (...) {
-                return 0; 
+                return 0.0; 
             }
         };
 
-        long src_bytes = parseBytes(src_bytes_str);
-        long dst_bytes = parseBytes(dst_bytes_str);
-
-        double peso = src_bytes + dst_bytes;
-        if (peso <= 0) peso = 1;
+        double peso = parseDuration(duration_str);
+        
+        // Si el peso es negativo por error en los datos, lo dejamos en 0. 
+        // Ya no lo forzamos a 1 porque las duraciones pueden ser fracciones pequeñas (ej. 0.0001)
+        if (peso < 0) peso = 0.0;
 
         grafo.agregarArista(src_ip, dst_ip, peso);
     }

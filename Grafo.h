@@ -56,9 +56,8 @@ public:
         for (auto& arista : adyacencia[u]) {
             if (arista.destino == v) {
                 encontradaU = true;
-                if (peso < arista.peso) {
-                    arista.peso = peso;
-                }
+                // Acumulamos el tiempo total de conexión
+                arista.peso += peso;
                 break;
             }
         }
@@ -72,7 +71,7 @@ public:
         } else if (!dirigido) {
             for (auto& arista : adyacencia[v]) {
                 if (arista.destino == u) {
-                    if (peso < arista.peso) arista.peso = peso;
+                    arista.peso += peso;
                     break;
                 }
             }

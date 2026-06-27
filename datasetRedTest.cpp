@@ -8,7 +8,7 @@ int main() {
 
     cout << "Iniciando parseo del dataset..." << endl;
     
-    Grafo grafo = parsearDatasetRed("train_test_network.csv", false);
+    Grafo<string> grafo = parsearDatasetRed("train_test_network.csv", false);
 
     cout << "\nParseo finalizado desde el main." << endl;
     cout << "Total de vertices en el grafo: " << grafo.obtenerCantidadVertices() << endl;
@@ -24,7 +24,7 @@ int main() {
         for (const auto& arista : vecinos) {
             string ip_destino = grafo.obtenerNodo(arista.destino);
             cout << "  -> Conectado a (IP Destino): " << ip_destino 
-                 << " | Peso (Suma de bytes): " << arista.peso << endl;
+                 << " | Peso (Tiempo total de conexion): " << arista.peso << " segs" << endl;
         }
     }
 
