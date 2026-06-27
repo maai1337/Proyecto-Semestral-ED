@@ -11,38 +11,131 @@ struct Arista {
     double peso;
 };
 
+template <typename T>
 class Grafo {
 private:
-    std::unordered_map<std::string, int> nodoAId;
-    std::vector<std::string> idANodo;
+    std::unordered_map<T, int> nodoAId;
+    std::vector<T> idANodo;
     
-    //Lista de adyacencia
-    // Cada vertice tiene asociada una lista con sus vecinos 
     std::vector<std::vector<Arista>> adyacencia;
 
     bool dirigido;
-
     int cantidadAristas;
 
-    int obtenerOAgregarId(const std::string& nodo);
+    int obtenerOAgregarId(const T& nodo) {
+        auto it = nodoAId.find(nodo);
+        if (it != nodoAId.end()) {
+            return it->second;
+        }
+        int id = idANodo.size();
+        nodoAId[nodo] = id;
+        idANodo.push_back(nodo);
+        adyacencia.push_back(std::vector<Arista>());
+        return id;
+    }
 
 public:
-    //Constructor del grafo, por defecto crea un grafo no dirigido
-    Grafo(bool esDirigido = false);
+    //Constructor de la clase Grafo
+    //Recibe si el grafo es dirigido o no
+    Grafo(bool esDirigido = false) {
+        dirigido = esDirigido;
+        cantidadAristas = 0;
+    }
 
-    void agregarVertice(const std::string& nodo);
-    void agregarArista(const std::string& origen, const std::string& destino, double peso = 1.0);
-
-    const std::vector<Arista>& obtenerVecinos(const std::string& nodo) const;
-    const std::vector<Arista>& obtenerVecinos(int id) const;
-
-    int obtenerCantidadVertices() const;
-    int obtenerCantidadAristas() const;
+    //agrega vertice al grafo si todavia no existe
+    void agregarVertice(const T& nodo) {
+        obtenerOAgregarId(nodo);
+    }
     
-    std::string obtenerNodo(int id) const;
-    int obtenerId(const std::string& nodo) const;
+    //agrega una arista entre el vertice origen y el vertice destino
+    void agregarArista(const T& origen, const T& destino, double peso = 1.0) {
+        int u = obtenerOAgregarId(origen);
+        int v = obtenerOAgregarId(destino);
 
-    void mostrarGrafo() const;
+        bool encontradaU = false;
+        for (auto& arista : adyacencia[u]) {
+            if (arista.destino == v) {
+                encontradaU = true;
+                if (peso < arista.peso) {
+                    arista.peso = peso;
+                }
+                break;
+            }
+        }
+
+        if (!encontradaU) {
+            adyacencia[u].push_back({v, peso});
+            if (!dirigido) {
+                adyacencia[v].push_back({u, peso});
+            }
+            cantidadAristas++;
+        } else if (!dirigido) {
+            for (auto& arista : adyacencia[v]) {
+                if (arista.destino == u) {
+                    if (peso < arista.peso) arista.peso = peso;
+                    break;
+                }
+            }
+        }
+    }
+
+    //retorna los vecinos de un vertice
+    //si el vertice no existe, retorna un vector vacio
+    const std::vector<Arista>& obtenerVecinos(const T& nodo) const {
+        auto it = nodoAId.find(nodo);
+        if (it != nodoAId.end()) {
+            return adyacencia[it->second];
+        }
+        static const std::vector<Arista> vacio; 
+        return vacio;
+    }
+
+    const std::vector<Arista>& obtenerVecinos(int id) const {
+        if (id >= 0 && id < adyacencia.size()) {
+            return adyacencia[id];
+        }
+        static const std::vector<Arista> vacio;
+        return vacio;
+    }
+
+    int obtenerCantidadVertices() const {
+        return idANodo.size();
+    }
+    
+    //retorna la cantidad de aristas del grafo
+    int obtenerCantidadAristas() const {
+        return cantidadAristas;
+    }
+    
+    T obtenerNodo(int id) const {
+        if (id >= 0 && id < idANodo.size()) {
+            return idANodo[id];
+        }
+        return T();
+    }
+    
+    int obtenerId(const T& nodo) const {
+        auto it = nodoAId.find(nodo);
+        if (it != nodoAId.end()) {
+            return it->second;
+        }
+        return -1;
+    }
+
+    //Muestra el contenido del grafo usando la lista de adyacencia
+    void mostrarGrafo() const {
+        for (int i = 0; i < adyacencia.size(); i++) {
+            if (adyacencia[i].empty()) continue; 
+            
+            std::cout << idANodo[i] << ": ";
+
+            //muestra todos los vecinos del vertice actual
+            for (const auto& arista : adyacencia[i]) {
+                std::cout << "(" << idANodo[arista.destino] << ", peso: " << arista.peso << ") ";
+            }
+            std::cout << std::endl;
+        }
+    }
 };
 
 #endif
