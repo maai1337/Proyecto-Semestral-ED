@@ -1,5 +1,5 @@
-#ifndef DATASET_PARSER_H
-#define DATASET_PARSER_H
+#ifndef RED_PARSER_H
+#define RED_PARSER_H
 
 #include "Grafo.h"
 #include <string>
