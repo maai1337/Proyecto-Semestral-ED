@@ -4,6 +4,6 @@
 #include "Grafo.h"
 #include <string>
 
-Grafo parsearDatasetRed(const std::string& nombreArchivo, bool dirigido = false);
+Grafo<std::string> parsearDatasetRed(const std::string& nombreArchivo, bool dirigido = false);
 
 #endif

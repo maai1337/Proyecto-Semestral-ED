@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Grafo parsearDatasetRed(const string& nombreArchivo, bool dirigido) {
-    Grafo grafo(dirigido);
+Grafo<string> parsearDatasetRed(const string& nombreArchivo, bool dirigido) {
+    Grafo<string> grafo(dirigido);
 
     ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
@@ -22,19 +22,33 @@ Grafo parsearDatasetRed(const string& nombreArchivo, bool dirigido) {
     while (getline(archivo, linea)) {
         stringstream ss(linea);
         string campo;
-        vector<string> columnas;
+        
+        string src_ip, dst_ip;
+        string src_bytes_str, dst_bytes_str;
 
+        int index = 0;
         while (getline(ss, campo, ',')) {
-            columnas.push_back(campo);
+            if (index == 0) src_ip = campo;
+            else if (index == 2) dst_ip = campo;
+            else if (index == 7) src_bytes_str = campo;
+            else if (index == 8) dst_bytes_str = campo;
+            index++;
         }
 
-        if (columnas.size() < 43) continue;
+        if (index < 9) continue; // Si la línea está incompleta la ignoramos
 
-        string src_ip = columnas[0];
-        string dst_ip = columnas[2];
+        auto parseBytes = [](const string& str) -> long {
+            if (str.empty() || str == "-") return 0;
+            if (!isdigit(str[0])) return 0;
+            try {
+                return stol(str);
+            } catch (...) {
+                return 0; 
+            }
+        };
 
-        long src_bytes = columnas[7].empty() ? 0 : stol(columnas[7]);
-        long dst_bytes = columnas[8].empty() ? 0 : stol(columnas[8]);
+        long src_bytes = parseBytes(src_bytes_str);
+        long dst_bytes = parseBytes(dst_bytes_str);
 
         double peso = src_bytes + dst_bytes;
         if (peso <= 0) peso = 1;
