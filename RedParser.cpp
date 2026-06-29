@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/**
+ * @brief Implementación de la función para leer y construir el grafo desde el archivo de red de IPs.
+ * Lee las comunicaciones de red y usa la duración de la conexión como peso de las aristas.
+ */
 Grafo<string> parsearDatasetRed(const string& nombreArchivo, bool dirigido) {
     Grafo<string> grafo(dirigido);
 

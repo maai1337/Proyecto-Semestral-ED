@@ -2,7 +2,7 @@
 #define METRICAS_ADICIONALES_H
 
 #include "Grafo.h"
-#include "BFS.h"
+#include "BSF.h"
 #include "Dijkstra.h"
 #include <vector>
 #include <limits>

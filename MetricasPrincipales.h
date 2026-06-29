@@ -2,7 +2,7 @@
 #define METRICAS_PRINCIPALES_H
 
 #include "Grafo.h"
-#include "BFS.h"
+#include "BSF.h"
 #include "Dijkstra.h"
 #include <vector>
 #include <stack>

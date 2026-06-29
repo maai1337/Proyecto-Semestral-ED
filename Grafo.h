@@ -78,6 +78,33 @@ public:
         }
     }
 
+    //remueve una arista entre el vertice origen y el vertice destino
+    void removerArista(const T& origen, const T& destino) {
+        int u = obtenerId(origen);
+        int v = obtenerId(destino);
+        if (u == -1 || v == -1) return;
+
+        bool eliminada = false;
+        for (auto it = adyacencia[u].begin(); it != adyacencia[u].end(); ++it) {
+            if (it->destino == v) {
+                adyacencia[u].erase(it);
+                eliminada = true;
+                break;
+            }
+        }
+        
+        if (eliminada) {
+            cantidadAristas--;
+            if (!dirigido) {
+                for (auto it = adyacencia[v].begin(); it != adyacencia[v].end(); ++it) {
+                    if (it->destino == u) {
+                        adyacencia[v].erase(it);
+                        break;
+                    }
+                }
+            }
+        }
+    }
     //retorna los vecinos de un vertice
     //si el vertice no existe, retorna un vector vacio
     const std::vector<Arista>& obtenerVecinos(const T& nodo) const {

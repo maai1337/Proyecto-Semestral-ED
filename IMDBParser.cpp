@@ -5,6 +5,10 @@
 
 using namespace std;
 
+/**
+ * @brief Implementación de la función para leer y construir el grafo desde el archivo IMDB.
+ * Lee las relaciones de co-actuación entre actores y sus correspondientes pesos.
+ */
 Grafo<string> parsearDatasetIMDB(const string& nombreArchivo) {
     Grafo<string> grafo(false); // Grafo no dirigido
 
