@@ -6,22 +6,30 @@
 #include <string>
 #include <unordered_map>
 
+/**
+ * @brief Representa una arista del grafo que va a un nodo destino con un peso.
+ */
 struct Arista {
-    int destino;
-    double peso;
+    int destino;  // ID interno del nodo destino
+    double peso;  // Peso de la arista
 };
 
+/**
+ * @brief Clase plantilla para representar un Grafo mediante lista de adyacencia.
+ * Permite manejar grafos dirigidos y no dirigidos con pesos.
+ */
 template <typename T>
 class Grafo {
 private:
-    std::unordered_map<T, int> nodoAId;
-    std::vector<T> idANodo;
-    
-    std::vector<std::vector<Arista>> adyacencia;
+    std::unordered_map<T, int> nodoAId;          // Mapea el valor del nodo (T) a su ID numérico
+    std::vector<T> idANodo;                      // Mapea el ID numérico al valor del nodo (T)
+    std::vector<std::vector<Arista>> adyacencia; // Lista de adyacencia por ID de nodo
+    bool dirigido;                               // Indica si el grafo es dirigido
+    int cantidadAristas;                         // Contador de aristas únicas en el grafo
 
-    bool dirigido;
-    int cantidadAristas;
-
+    /**
+     * @brief Obtiene el ID de un nodo. Si no existe, lo crea y le asigna uno nuevo.
+     */
     int obtenerOAgregarId(const T& nodo) {
         auto it = nodoAId.find(nodo);
         if (it != nodoAId.end()) {
@@ -35,19 +43,25 @@ private:
     }
 
 public:
-    //Constructor de la clase Grafo
-    //Recibe si el grafo es dirigido o no
+    /**
+     * @brief Constructor del grafo.
+     * @param esDirigido true si el grafo es dirigido, false si no lo es (por defecto).
+     */
     Grafo(bool esDirigido = false) {
         dirigido = esDirigido;
         cantidadAristas = 0;
     }
 
-    //agrega vertice al grafo si todavia no existe
+    /**
+     * @brief Agrega un nuevo vértice al grafo (si no existe previamente).
+     */
     void agregarVertice(const T& nodo) {
         obtenerOAgregarId(nodo);
     }
     
-    //agrega una arista entre el vertice origen y el vertice destino
+    /**
+     * @brief Agrega una arista con peso entre dos vértices. Si ya existe, acumula el peso.
+     */
     void agregarArista(const T& origen, const T& destino, double peso = 1.0) {
         int u = obtenerOAgregarId(origen);
         int v = obtenerOAgregarId(destino);
@@ -56,8 +70,7 @@ public:
         for (auto& arista : adyacencia[u]) {
             if (arista.destino == v) {
                 encontradaU = true;
-                // Acumulamos el tiempo total de conexión
-                arista.peso += peso;
+                arista.peso += peso; // Acumula el peso si la arista ya existía
                 break;
             }
         }
@@ -78,7 +91,9 @@ public:
         }
     }
 
-    //remueve una arista entre el vertice origen y el vertice destino
+    /**
+     * @brief Remueve la arista entre el nodo origen y el nodo destino.
+     */
     void removerArista(const T& origen, const T& destino) {
         int u = obtenerId(origen);
         int v = obtenerId(destino);
@@ -105,8 +120,10 @@ public:
             }
         }
     }
-    //retorna los vecinos de un vertice
-    //si el vertice no existe, retorna un vector vacio
+
+    /**
+     * @brief Retorna la lista de aristas (vecinos) asociadas a un nodo buscando por su valor de objeto.
+     */
     const std::vector<Arista>& obtenerVecinos(const T& nodo) const {
         auto it = nodoAId.find(nodo);
         if (it != nodoAId.end()) {
@@ -116,6 +133,9 @@ public:
         return vacio;
     }
 
+    /**
+     * @brief Retorna la lista de aristas (vecinos) asociadas a un nodo buscando por su ID interno.
+     */
     const std::vector<Arista>& obtenerVecinos(int id) const {
         if (id >= 0 && id < adyacencia.size()) {
             return adyacencia[id];
@@ -124,15 +144,23 @@ public:
         return vacio;
     }
 
+    /**
+     * @brief Retorna la cantidad total de vértices registrados en el grafo.
+     */
     int obtenerCantidadVertices() const {
         return idANodo.size();
     }
     
-    //retorna la cantidad de aristas del grafo
+    /**
+     * @brief Retorna la cantidad total de aristas en el grafo.
+     */
     int obtenerCantidadAristas() const {
         return cantidadAristas;
     }
     
+    /**
+     * @brief Retorna el valor original del nodo (T) asociado a un ID interno.
+     */
     T obtenerNodo(int id) const {
         if (id >= 0 && id < idANodo.size()) {
             return idANodo[id];
@@ -140,6 +168,9 @@ public:
         return T();
     }
     
+    /**
+     * @brief Retorna el ID numérico interno correspondiente a un nodo. Retorna -1 si no existe.
+     */
     int obtenerId(const T& nodo) const {
         auto it = nodoAId.find(nodo);
         if (it != nodoAId.end()) {
@@ -148,14 +179,14 @@ public:
         return -1;
     }
 
-    //Muestra el contenido del grafo usando la lista de adyacencia
+    /**
+     * @brief Imprime en consola el contenido del grafo usando las listas de adyacencia.
+     */
     void mostrarGrafo() const {
         for (int i = 0; i < adyacencia.size(); i++) {
             if (adyacencia[i].empty()) continue; 
             
             std::cout << idANodo[i] << ": ";
-
-            //muestra todos los vecinos del vertice actual
             for (const auto& arista : adyacencia[i]) {
                 std::cout << "(" << idANodo[arista.destino] << ", peso: " << arista.peso << ") ";
             }
